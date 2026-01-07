@@ -1,0 +1,30 @@
+export const sharedStyles = {
+  input: {
+    width: '100%',
+    height: '46px', 
+    padding: '0 14px',
+    border: '1px solid #e2e8f0',
+    borderRadius: '6px',
+    fontSize: '14px',
+    fontFamily: 'Inter, system-ui, sans-serif',
+    outline: 'none',
+    boxSizing: 'border-box' as const,
+    background: '#ffffff',
+  },
+  button: {
+    width: '100%',
+    height: '46px',
+    background: '#0f172a',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontWeight: '600',
+    fontSize: '14px',
+    fontFamily: 'Inter, system-ui, sans-serif',
+    transition: 'background 0.2s ease',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
+};
