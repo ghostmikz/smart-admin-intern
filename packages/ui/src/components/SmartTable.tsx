@@ -2,110 +2,72 @@
 import React from "react";
 
 interface Column {
-  dataField: string;
-  caption: string;
-  width?: string | number;
-  cellRender?: (data: any) => React.ReactNode;
+  header: string;
+  key: string;
+  render?: (value: any, row: any) => React.ReactNode;
 }
 
 interface SmartTableProps {
-  dataSource: any[];
   columns: Column[];
-  style?: React.CSSProperties;
+  data: any[];
+  title?: string;
 }
 
-export const SmartTable = ({ dataSource, columns, style }: SmartTableProps) => {
+export const SmartTable = ({ columns, data, title }: SmartTableProps) => {
   return (
-    <div
-      style={{
-        fontFamily: "ui-sans-serif, system-ui, -apple-system, sans-serif",
-        width: "100%",
-        overflowX: "auto", // Handle mobile responsiveness
-        borderRadius: "12px",
-        border: "1px solid #f1f5f9",
-        background: "#ffffff",
-        boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.01)",
-        ...style,
-      }}
-    >
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          textAlign: "left",
-        }}
-      >
-        <thead>
-          <tr style={{ backgroundColor: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
-            {columns.map((col) => (
-              <th
-                key={col.dataField}
-                style={{
-                  padding: "16px",
-                  color: "#64748b",
-                  fontSize: "11px",
-                  fontWeight: "700",
-                  textTransform: "uppercase",
+    <div style={{ 
+      background: "#ffffff", 
+      borderRadius: "20px", 
+      border: "1px solid #f1f5f9",
+      boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
+      overflow: "hidden"
+    }}>
+      {title && (
+        <div style={{ padding: "24px", borderBottom: "1px solid #f1f5f9" }}>
+          <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#0f172a" }}>{title}</h3>
+        </div>
+      )}
+      <div style={{ width: "100%", overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0 }}>
+          <thead>
+            <tr style={{ background: "#f8fafc" }}>
+              {columns.map((col, i) => (
+                <th key={i} style={{ 
+                  padding: "16px 24px", 
+                  textAlign: "left", 
+                  fontSize: "11px", 
+                  textTransform: "uppercase", 
                   letterSpacing: "0.05em",
-                  width: col.width,
-                }}
-              >
-                {col.caption}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {dataSource.map((row, rowIndex) => (
-            <tr
-              key={rowIndex}
-              style={{
-                borderBottom: "1px solid #f1f5f9",
-                transition: "background-color 0.2s",
-                height: "56px",
-              }}
-              // Simple hover effect without external CSS
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#fbfcfe")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-            >
-              {columns.map((col) => (
-                <td
-                  key={col.dataField}
-                  style={{
-                    padding: "0 16px",
-                    fontSize: "14px",
-                    color: "#1e293b",
-                    verticalAlign: "middle",
-                  }}
-                >
-                  {/* If a custom cellRender is provided, use it; otherwise, show the dataField value */}
-                  {col.cellRender 
-                    ? col.cellRender(row) 
-                    : row[col.dataField]}
-                </td>
+                  color: "#64748b",
+                  fontWeight: "800",
+                  borderBottom: "1px solid #f1f5f9"
+                }}>
+                  {col.header}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Footer / Pagination Placeholder */}
-      <div
-        style={{
-          padding: "15px 20px",
-          borderTop: "1px solid #f1f5f9",
-          color: "#64748b",
-          fontSize: "12px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <span>Нийт {dataSource.length}</span>
-        <div style={{ display: "flex", gap: "8px" }}>
-          {/* You can add pagination buttons here later if needed */}
-        </div>
+          </thead>
+          <tbody>
+            {data.map((row, rowIndex) => (
+              <tr key={rowIndex} className="table-row" style={{ transition: "background 0.2s" }}>
+                {columns.map((col, colIndex) => (
+                  <td key={colIndex} style={{ 
+                    padding: "16px 24px", 
+                    fontSize: "14px", 
+                    color: "#334155",
+                    borderBottom: "1px solid #f8fafc"
+                  }}>
+                    {col.render ? col.render(row[col.key], row) : row[col.key]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .table-row:hover { background-color: #fcfcfd; }
+      `}} />
     </div>
   );
 };

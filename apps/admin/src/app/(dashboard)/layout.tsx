@@ -13,9 +13,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     role: "Admin" 
   };
 
-  const menu = [
+const menu = [
     { id: 0, text: "Хяналт", path: "/dashboard", emoji: "📊" }, 
     { id: 1, text: "Хэрэглэгчид", path: "/users", emoji: "👥" },
+    { id: 5, text: "Түүх", path: "/history", emoji: "📜" }, 
     { id: 2, text: "Профайл", path: "/profile", emoji: "👤" },
     { id: 3, text: "Тохиргоо", path: "/settings", emoji: "⚙️" },
     { id: 4, text: "Гарах", path: "/logout", emoji: "🚪" },
