@@ -12,6 +12,8 @@ interface SmartSidebarProps {
   children: React.ReactNode;
   items: NavigationItem[];
   onItemClick?: (item: NavigationItem) => void;
+  onHeaderClick?: () => void;
+  header?: React.ReactNode;
   user?: { name: string; email: string; role?: string };
   activePath?: string;
 }
@@ -20,6 +22,8 @@ export const SmartSidebar = ({
   children, 
   items, 
   onItemClick, 
+  onHeaderClick,
+  header,
   user = { name: "Chingunjav", email: "admin@smart.mn", role: "Админ" },
   activePath 
 }: SmartSidebarProps) => {
@@ -35,7 +39,7 @@ export const SmartSidebar = ({
       fontFamily: '"Plus Jakarta Sans", sans-serif' 
     }}>
       
-      {/* --- PINNED FLUID SIDEBAR --- */}
+      {/* --- SIDEBAR --- */}
       <aside style={{ 
         width: isOpened ? '280px' : '88px', 
         backgroundColor: '#fcfcfd', 
@@ -49,7 +53,7 @@ export const SmartSidebar = ({
         zIndex: 50
       }}>
         
-        {/* Modern Handle Toggle Button */}
+        {/* Toggle Button */}
         <div 
           onClick={() => setIsOpened(!isOpened)}
           style={{ 
@@ -65,12 +69,9 @@ export const SmartSidebar = ({
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.06)',
-            zIndex: 100,
-            transition: 'transform 0.2s, background 0.2s',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+            zIndex: 100
           }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
         >
           <svg 
             width="12" height="12" viewBox="0 0 12 12" fill="none" 
@@ -83,8 +84,17 @@ export const SmartSidebar = ({
           </svg>
         </div>
 
-        {/* Header */}
-        <div style={{ padding: '32px 24px', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+        {/* Clickable Header */}
+        <div 
+          onClick={onHeaderClick}
+          style={{ 
+            padding: '32px 24px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            overflow: 'hidden',
+            cursor: onHeaderClick ? 'pointer' : 'default'
+          }}
+        >
           <div style={{ 
             minWidth: '40px', height: '40px', 
             background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)', 
@@ -94,16 +104,15 @@ export const SmartSidebar = ({
           }}>
             <span style={{ color: 'white', fontWeight: 'bold', fontSize: '18px' }}>S</span>
           </div>
-          <span style={{ 
-            marginLeft: '16px', fontWeight: '800', color: '#0f172a', fontSize: '15px',
+          <div style={{ 
+            marginLeft: '16px',
             opacity: isOpened ? 1 : 0, 
             transform: isOpened ? 'translateX(0)' : 'translateX(-10px)',
             transition: 'all 0.4s ease', 
-            whiteSpace: 'nowrap',
-            letterSpacing: '-0.5px'
+            whiteSpace: 'nowrap'
           }}>
-            SMART ADMIN
-          </span>
+            {header}
+          </div>
         </div>
 
         {/* Navigation */}
@@ -169,7 +178,7 @@ export const SmartSidebar = ({
         </div>
       </aside>
 
-      {/* --- CONTENT AREA --- */}
+      {/* --- MAIN CONTENT WINDOW --- */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'hidden' }}>
         {children}
       </div>

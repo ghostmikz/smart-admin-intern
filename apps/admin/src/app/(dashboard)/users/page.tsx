@@ -1,7 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { SmartInput, SmartButton } from "@repo/ui";
+import { 
+  SmartInput, 
+  SmartButton, 
+  SmartTable, 
+  DashboardCard 
+} from "@repo/ui";
 
 export default function UsersPage() {
   const router = useRouter();
@@ -14,7 +19,7 @@ export default function UsersPage() {
     { id: 4, name: "Bold", email: "bold.tech@gmail.com", role: "User", status: "Active" },
     { id: 5, name: "Anu", email: "anu.designer@gmail.com", role: "Editor", status: "Active" },
     { id: 6, name: "Ganzorig", email: "ganzo.work@gmail.com", role: "User", status: "Inactive" },
-    { id: 7, name: "Khulan", email: "khulan.m@gmail.com", role: "Admin", status: "Active" },
+    { id: 7, name: "Doomslayer", email: "Doomslayer@gmail.com", role: "Admin", status: "Active" },
     { id: 8, name: "Temuulen", email: "temka.t@gmail.com", role: "User", status: "Active" },
     { id: 9, name: "Nomin", email: "nomin.e@gmail.com", role: "Editor", status: "Active" },
     { id: 10, name: "Tuvshin", email: "tuvshoo.dev@gmail.com", role: "User", status: "Inactive" },
@@ -35,76 +40,120 @@ export default function UsersPage() {
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const columns = [
+    { 
+      header: "Хэрэглэгч", 
+      key: "name",
+      render: (val: string, row: any) => (
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ 
+            width: "36px", height: "36px", borderRadius: "10px", 
+            background: "#f1f5f9", 
+            color: "#475569", 
+            display: "flex", alignItems: "center", justifyContent: "center", 
+            fontWeight: "800", fontSize: "13px" 
+          }}>
+            {val[0]}
+          </div>
+          <div>
+            <div style={{ fontWeight: "700", color: "#0f172a", fontSize: "14px" }}>{val}</div>
+            <div style={{ color: "#94a3b8", fontSize: "12px" }}>{row.email}</div>
+          </div>
+        </div>
+      )
+    },
+    { 
+      header: "Эрх", 
+      key: "role",
+      render: (val: string) => (
+        <span style={{ 
+          fontSize: "12px", 
+          fontWeight: "700", 
+          color: val === "Admin" ? "#6366f1" : "#64748b",
+          background: val === "Admin" ? "#f5f3ff" : "#f8fafc",
+          padding: "4px 10px",
+          borderRadius: "6px",
+          textTransform: "uppercase",
+          letterSpacing: "0.02em"
+        }}>
+          {val}
+        </span>
+      )
+    },
+    { 
+      header: "Төлөв", 
+      key: "status",
+      render: (val: string) => (
+        <span style={{ 
+          fontSize: "12px", 
+          fontWeight: "700", 
+          color: val === "Active" ? "#16a34a" : "#94a3b8",
+          background: val === "Active" ? "#f0fdf4" : "#f8fafc",
+          padding: "4px 10px",
+          borderRadius: "6px"
+        }}>
+          {val === "Active" ? "Идэвхтэй" : "Идэвхгүй"}
+        </span>
+      )
+    },
+    {
+      header: "",
+      key: "actions",
+      render: (_: any, row: any) => (
+        <button 
+          onClick={() => router.push(`/users/edit/${row.id}`)}
+          style={{ 
+            background: "none", border: "none", color: "#cbd5e1", 
+            cursor: "pointer", fontWeight: "900", fontSize: "18px",
+            padding: "8px"
+          }}
+        >
+          ⋮
+        </button>
+      )
+    }
+  ];
+
   return (
-    <div style={{ width: "100%", transition: "all 0.4s ease" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "32px" }}>
+    <div style={{ width: "100%", paddingBottom: "40px" }}>
+      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "32px" }}>
         <div>
-          <h1 style={{ fontSize: "24px", fontWeight: "850", color: "#0f172a", letterSpacing: "-0.04em", margin: 0 }}>Хэрэглэгчид</h1>
-          <p style={{ color: "#94a3b8", fontSize: "14px", marginTop: "4px" }}>Нийт {users.length} хэрэглэгч</p>
+          <h1 style={{ fontSize: "28px", fontWeight: "850", color: "#0f172a", letterSpacing: "-0.05em", margin: 0 }}>
+            Хэрэглэгчид
+          </h1>
+          <p style={{ color: "#94a3b8", fontSize: "14px", marginTop: "4px" }}>
+            Нийт {users.length} бүртгэлтэй байна
+          </p>
         </div>
         <div style={{ width: "180px" }}>
           <SmartButton text="Шинэ хэрэглэгч +" onClick={() => router.push("/users/new")} />
         </div>
-      </div>
+      </header>
 
-      <div style={{ 
-        background: "#ffffff", 
-        borderRadius: "16px", 
-        border: "1px solid #f1f5f9",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.02)"
-      }}>
-        <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9" }}>
-          <div style={{ width: "320px" }}>
+      <DashboardCard 
+        title="Жагсаалт" 
+        noPadding 
+        action={
+          <div style={{ width: "280px" }}>
             <SmartInput 
-              placeholder="Хайх..." 
+              placeholder="Хайх (Нэр, имэйл...)" 
               value={searchTerm}
               onChange={(val) => setSearchTerm(val)}
-              hideLabel={true}
+              hideLabel
             />
           </div>
-        </div>
-
-        {/* Table Container with overflow prevention */}
-        <div style={{ width: "100%", overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0, textAlign: "left", minWidth: "600px" }}>
-            <thead style={{ background: "#fcfcfd" }}>
-              <tr>
-                <th style={{ padding: "14px 24px", fontSize: "10px", fontWeight: "800", color: "#94a3b8", textTransform: "uppercase", borderBottom: "1px solid #f1f5f9" }}>Хэрэглэгч</th>
-                <th style={{ padding: "14px 24px", fontSize: "10px", fontWeight: "800", color: "#94a3b8", textTransform: "uppercase", borderBottom: "1px solid #f1f5f9" }}>Эрх</th>
-                <th style={{ padding: "14px 24px", fontSize: "10px", fontWeight: "800", color: "#94a3b8", textTransform: "uppercase", borderBottom: "1px solid #f1f5f9" }}>Төлөв</th>
-                <th style={{ padding: "14px 24px", borderBottom: "1px solid #f1f5f9" }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.map((user) => (
-                <tr key={user.id} style={{ transition: "background 0.2s" }}>
-                  <td style={{ padding: "16px 24px", borderBottom: "1px solid #f8fafc" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                      <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "#f1f5f9", color: "#64748b", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "700", fontSize: "12px" }}>{user.name[0]}</div>
-                      <div>
-                        <div style={{ fontWeight: "700", color: "#0f172a", fontSize: "14px" }}>{user.name}</div>
-                        <div style={{ color: "#94a3b8", fontSize: "12px" }}>{user.email}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td style={{ padding: "16px 24px", borderBottom: "1px solid #f8fafc" }}>
-                    <span style={{ fontSize: "13px", color: "#475569", fontWeight: "600" }}>{user.role}</span>
-                  </td>
-                  <td style={{ padding: "16px 24px", borderBottom: "1px solid #f8fafc" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                      <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: user.status === "Active" ? "#22c55e" : "#cbd5e1" }} />
-                      <span style={{ fontSize: "12px", fontWeight: "700", color: user.status === "Active" ? "#16a34a" : "#64748b" }}>{user.status}</span>
-                    </div>
-                  </td>
-                  <td style={{ padding: "16px 24px", textAlign: "right", borderBottom: "1px solid #f8fafc" }}>
-                    <button style={{ background: "none", border: "none", color: "#cbd5e1", cursor: "pointer", fontWeight: "900", fontSize: "18px" }}>⋮</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+        }
+      >
+        {filteredUsers.length > 0 ? (
+          <SmartTable columns={columns} data={filteredUsers} />
+        ) : (
+          <div style={{ padding: "100px 20px", textAlign: "center" }}>
+            <div style={{ fontSize: "48px", marginBottom: "16px" }}>🕵️‍♂️</div>
+            <h3 style={{ fontWeight: "800", color: "#0f172a", margin: "0 0 8px 0" }}>Хэрэглэгч олдсонгүй</h3>
+            <p style={{ color: "#94a3b8", fontSize: "14px" }}>"{searchTerm}" гэсэн нэртэй хүн байхгүй байна.</p>
+          </div>
+        )}
+      </DashboardCard>
     </div>
   );
 }

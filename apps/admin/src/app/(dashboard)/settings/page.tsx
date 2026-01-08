@@ -1,156 +1,140 @@
 "use client";
 import React, { useState } from "react";
-import { SmartInput, SmartButton, SmartFormField, SmartSelect } from "@repo/ui";
+import { 
+  SmartInput, 
+  SmartButton, 
+  SmartFormField, 
+  SmartSelect, 
+  DashboardCard, 
+  Toast 
+} from "@repo/ui";
 
 export default function SettingsPage() {
+  const [showToast, setShowToast] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  
   const [formData, setFormData] = useState({
     language: "mn",
     theme: "light",
-    systemName: "Smart Admin System"
+    systemName: "Smart Admin System",
+    notifications: true
   });
 
-  const updateField = (field: string, value: string) => {
+  const updateField = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const languageOptions = [
-    { value: "mn", label: "Монгол (MN)" },
-    { value: "en", label: "English (EN)" },
-  ];
-
-  const themeOptions = [
-    { value: "light", label: "Light Mode" },
-    { value: "dark", label: "Dark Mode" },
-  ];
+  const handleSave = () => {
+    setIsSaving(true);
+    // Simulate a 1-second save process
+    setTimeout(() => {
+      setIsSaving(false);
+      setShowToast(true);
+    }, 1000);
+  };
 
   return (
-    <div style={{ 
-      maxWidth: '640px', 
-      margin: '0 auto', 
-      padding: '40px 20px',
-      fontFamily: 'ui-sans-serif, system-ui, sans-serif',
-      color: '#0f172a'
-    }}>
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 24px' }}>
       
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ 
-          fontSize: '24px', 
-          fontWeight: '850', 
-          color: '#0f172a', 
-          letterSpacing: '-0.03em', 
-          margin: 0 
-        }}>
-          Тохиргоо
-        </h1>
-        <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '2px' }}>
-          Системийн ерөнхий тохиргоог эндээс удирдана
-        </p>
+      {/* 1. Header Area */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+        <div>
+          <h1 style={{ fontSize: '28px', fontWeight: '850', color: '#0f172a', letterSpacing: '-0.04em', margin: 0 }}>
+            Систем тохиргоо
+          </h1>
+          <p style={{ color: '#64748b', fontSize: '15px', marginTop: '4px' }}>
+            Платформын үндсэн тохиргоог эндээс удирдана
+          </p>
+        </div>
+        <div style={{ background: '#f1f5f9', padding: '6px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: '700', color: '#475569' }}>
+          V1.0.4
+        </div>
       </div>
 
-      <div style={{ 
-        background: '#ffffff', 
-        borderRadius: '12px', 
-        border: '1px solid #f1f5f9',
-        overflow: 'hidden',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
-      }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         
-        <div style={{ padding: '24px', borderBottom: '1px solid #f8fafc' }}>
-          <div style={{ 
-            fontSize: '10px', 
-            fontWeight: '800', 
-            color: '#cbd5e1', 
-            textTransform: 'uppercase', 
-            marginBottom: '20px', 
-            letterSpacing: '0.05em' 
-          }}>
-            01. Системийн харагдац
-          </div>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-            <SmartFormField label="Хэл сонгох">
+        {/* 2. Appearance Section */}
+        <DashboardCard title="Харагдац болон хэл">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+            <SmartFormField label="Үндсэн хэл">
               <SmartSelect 
-                options={languageOptions} 
+                options={[{ value: "mn", label: "Монгол" }, { value: "en", label: "English" }]} 
                 value={formData.language}
                 onChange={(val) => updateField("language", val)}
               />
             </SmartFormField>
             
-            <SmartFormField label="Харагдац (Theme)">
+            <SmartFormField label="Системийн өнгө">
               <SmartSelect 
-                options={themeOptions} 
+                options={[{ value: "light", label: "Light Mode" }, { value: "dark", label: "Dark Mode" }]} 
                 value={formData.theme}
                 onChange={(val) => updateField("theme", val)}
               />
             </SmartFormField>
           </div>
-        </div>
+        </DashboardCard>
 
-        <div style={{ padding: '24px', background: '#fcfcfd' }}>
-          <div style={{ 
-            fontSize: '10px', 
-            fontWeight: '800', 
-            color: '#cbd5e1', 
-            textTransform: 'uppercase', 
-            marginBottom: '20px', 
-            letterSpacing: '0.05em' 
-          }}>
-            02. Ерөнхий мэдээлэл
-          </div>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-            <div style={{ gridColumn: 'span 2' }}>
-              <SmartFormField label="Системийн нэр">
-                <SmartInput 
-                  value={formData.systemName}
-                  placeholder="Системийн нэрийг оруулна уу" 
-                  onChange={(val) => updateField("systemName", val)}
-                  hideLabel={true} 
-                />
-              </SmartFormField>
+        {/* 3. General Info with Styled Native Checkbox */}
+        <DashboardCard title="⚙️ Ерөнхий мэдээлэл">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <SmartFormField label="Системийн нэршил">
+              <SmartInput 
+                value={formData.systemName}
+                onChange={(val) => updateField("systemName", val)}
+                hideLabel
+              />
+            </SmartFormField>
+
+            <div style={{ 
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #f1f5f9'
+            }}>
+              <div>
+                <div style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>Имэйл мэдэгдэл</div>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>Системийн чухал өөрчлөлтийг имэйлээр авах</div>
+              </div>
+              
+              {/* Using a clean native checkbox with modern accent color */}
+              <input 
+                type="checkbox" 
+                checked={formData.notifications}
+                onChange={(e) => updateField("notifications", e.target.checked)}
+                style={{ 
+                  width: '20px', 
+                  height: '20px', 
+                  accentColor: '#0f172a', // Matches your dark theme color
+                  cursor: 'pointer' 
+                }}
+              />
             </div>
           </div>
-        </div>
+        </DashboardCard>
 
-        <div style={{ 
-          padding: '16px 24px', 
-          background: '#ffffff', 
-          borderTop: '1px solid #f1f5f9',
-          display: 'flex', 
-          justifyContent: 'flex-end', 
-          gap: '12px',
-          alignItems: 'center'
-        }}>
+        {/* 4. Footer Actions */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', alignItems: 'center', marginTop: '8px' }}>
           <button 
-            type="button"
-            onClick={() => window.history.back()}
-            style={{ 
-              background: 'none', 
-              border: 'none', 
-              color: '#94a3b8', 
-              fontWeight: '700', 
-              fontSize: '13px', 
-              cursor: 'pointer' 
-            }}
+            onClick={() => window.history.back()} 
+            style={{ background: 'none', border: 'none', color: '#94a3b8', fontWeight: '700', cursor: 'pointer', fontSize: '14px' }}
           >
             Цуцлах
           </button>
-          
-          <div style={{ width: '160px' }}>
+          <div style={{ width: '180px' }}>
             <SmartButton 
-              text="Хадгалах" 
-              onClick={() => {
-                console.log("Saving settings:", formData);
-                alert("Тохиргоо амжилттай хадгалагдлаа!");
-              }} 
+              text={isSaving ? "Хадгалж байна..." : "Хадгалах"} 
+              onClick={handleSave} 
             />
           </div>
         </div>
       </div>
 
-      <p style={{ textAlign: 'center', fontSize: '11px', color: '#cbd5e1', marginTop: '24px' }}>
-        v1.0.4 - Core System
-      </p>
+      {/* 5. Toast Feedback */}
+      {showToast && (
+        <Toast 
+          message="Тохиргоо амжилттай хадгалагдлаа" 
+          type="success" 
+          onClose={() => setShowToast(false)} 
+        />
+      )}
     </div>
   );
 }
